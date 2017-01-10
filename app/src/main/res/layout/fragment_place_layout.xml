@@ -27,7 +27,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:textSize="12sp"
-            android:singleLine="true" />
+            android:maxLines="1" />
     </LinearLayout>
 
     <TextView
@@ -38,7 +38,5 @@
         android:layout_weight="0.25"
         android:textSize="24sp"
         android:paddingRight="16dp"
-        android:textAlignment="textEnd"
-        android:layout_gravity="end"
-        android:gravity="center_vertical" />
+        android:gravity="right|center" />
 </LinearLayout>

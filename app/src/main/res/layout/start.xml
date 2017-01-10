@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/start"
+    tools:context="babychange.babychange.StartActivity" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Find places near me with..."
+        android:layout_margin="16dp"
+        android:textSize="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1.0">
+    <Button
+        android:id="@+id/babyChangeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:padding="32dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:text="Baby Change"
+        android:onClick="searchForPlaces" />
+
+    <Button
+        android:id="@+id/highchairsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:padding="32dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Highchairs" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1.0">
+        <Button
+            android:id="@+id/kidsMenusButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:padding="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="Kids' Menus" />
+
+        <Button
+            android:id="@+id/feedingAreaButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:padding="32dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="Feeding Area" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Other stuff..."
+        android:layout_margin="16dp"
+        android:textSize="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1.0">
+        <Button
+            android:id="@+id/yourProfileButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:padding="32dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="4dp"
+            android:text="Your Profile" />
+
+        <Button
+            android:id="@+id/addAPlaceButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:padding="32dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="16dp"
+            android:text="Add a Place" />
+    </LinearLayout>
+</LinearLayout>
