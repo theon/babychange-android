@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0.75">
+        <TextView
+            android:text="Place Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeNameText"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:textSize="18sp" />
+        <TextView
+            android:text="Address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/addressText"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textSize="12sp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <TextView
+        android:text="500m"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/distanceText"
+        android:layout_weight="0.25"
+        android:textSize="24sp"
+        android:paddingRight="16dp"
+        android:textAlignment="textEnd"
+        android:layout_gravity="end"
+        android:gravity="center_vertical" />
+</LinearLayout>
