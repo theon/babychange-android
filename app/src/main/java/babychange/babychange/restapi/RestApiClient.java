@@ -12,4 +12,7 @@ public interface RestApiClient {
     Call<PlaceSearchResults> findPlaces(@Path("lat") double lat,
                                         @Path("lon") double lon,
                                         @Query("facility")List<RestApiFilter> facilities);
+
+    @GET("filters")
+    Call<AllowedFilters> getAllowedFilters();
 }

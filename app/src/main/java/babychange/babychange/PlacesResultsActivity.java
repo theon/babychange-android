@@ -2,6 +2,7 @@ package babychange.babychange;
 
 import android.Manifest;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -31,6 +33,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import babychange.babychange.restapi.AllowedFilters;
 import babychange.babychange.restapi.PlaceSearchResults;
 import babychange.babychange.restapi.RestApiClient;
 import babychange.babychange.restapi.RestApiFilter;
@@ -40,6 +43,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static babychange.babychange.restapi.RestApiFilter.ENABLED_FILTERS_EXTRA_KEY;
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
@@ -108,52 +112,68 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
     }
 
     @Override
-    protected void onStart() {
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         FragmentManager fragmentManager = getFragmentManager();
         resultsListFragment = (PlacesResultsListFragment) fragmentManager.findFragmentById(R.id.resultsListFragment);
-        resultsListFragment.setEmptyText("No results.");
+        resultsListFragment.setEmptyText("No results nearby");
 
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION);
         checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
         checkPermission(Manifest.permission.INTERNET);
 
-        mGoogleApiClient.connect();
+        Call<AllowedFilters> response = restClient.getAllowedFilters();
 
-        LinearLayout facilityFiltersLayout = (LinearLayout) findViewById(R.id.facility_filters_layout);
+        //TODO: Make member variable
+        final LinearLayout facilityFiltersLayout = (LinearLayout) findViewById(R.id.facility_filters_layout);
         facilityFiltersLayout.removeAllViews();
-
-        ArrayList<String> filters = new ArrayList<>();
-        filters.add("babyChanging");
-        filters.add("highchairs");
-
-        ArrayList<String> values = new ArrayList<>();
-        values.add("Yes");
-        values.add("Wow");
-
-        int eightDp = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-
         facilityFilterCheckboxes = new ArrayList<>();
-        for(String filter: filters) {
-            TextView title = new TextView(this);
-            title.setText(filter);
-            title.setPadding(eightDp, eightDp, eightDp, eightDp);
+
+        final ArrayList<RestApiFilter> enabledFilters = getIntent().getParcelableArrayListExtra(ENABLED_FILTERS_EXTRA_KEY);
+
+        response.enqueue(new Callback<AllowedFilters>() {
+            @Override
+            public void onResponse(Call<AllowedFilters> call, Response<AllowedFilters> response) {
+                int eightDp = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+
+                for(AllowedFilters.AllowedFilter filter: response.body().facility) {
+                    TextView title = new TextView(PlacesResultsActivity.this);
+                    title.setText(filter.name);
+                    title.setPadding(eightDp, eightDp, eightDp, eightDp);
 //            title.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 //            title.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-            facilityFiltersLayout.addView(title);
+                    facilityFiltersLayout.addView(title);
 
-            for(String value: values) {
-                CheckBox filterCheckbox = new CheckBox(this);
-                filterCheckbox.setText(value);
-                filterCheckbox.setPadding(eightDp, eightDp, eightDp, eightDp);
+                    for(AllowedFilters.AllowedFilterValue value: filter.allowedValues) {
+                        CheckBox filterCheckbox = new CheckBox(PlacesResultsActivity.this);
+                        filterCheckbox.setText(value.value);
+                        filterCheckbox.setPadding(eightDp, eightDp, eightDp, eightDp);
 //                filterCheckbox.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 //                filterCheckbox.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                facilityFiltersLayout.addView(filterCheckbox);
-                facilityFilterCheckboxes.add(new FilterCheckBox(filterCheckbox, new RestApiFilter(filter, filter, value)));
-            }
-        }
+                        RestApiFilter apiFilter = new RestApiFilter(filter.queryName, value.queryValue);
 
-        super.onStart();
+                        if(enabledFilters.contains(apiFilter)) {
+                            filterCheckbox.setChecked(true);
+                        }
+
+                        facilityFiltersLayout.addView(filterCheckbox);
+                        facilityFilterCheckboxes.add(new FilterCheckBox(filterCheckbox, apiFilter));
+                    }
+                }
+
+                // Only connect to location api after we have set up the filters as location api tends to win the
+                // race comes back before and fails as facilityFilterCheckboxes hasn't been set up.
+                // Better way to do this so that we can connect, get location, but wait for facilityFilterCheckboxes?
+                mGoogleApiClient.connect();
+            }
+
+            @Override
+            public void onFailure(Call<AllowedFilters> call, Throwable t) {
+                internetApiCallFailure(t);
+            }
+        });
+
+        super.onPostCreate(savedInstanceState);
     }
 
     public void searchWithFilters(View button) {
@@ -167,12 +187,6 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ permission }, 1);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
     }
 
     @Override
@@ -209,7 +223,6 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
@@ -233,19 +246,23 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
             }
             @Override
             public void onFailure(Call<PlaceSearchResults> call, Throwable t) {
-                Toast.makeText(PlacesResultsActivity.this, "Unable to contact server. Check your Internet connection", Toast.LENGTH_LONG).show();
-                Log.e("TAG", "BabyChange API Call failed", t);
-                finish();
+                internetApiCallFailure(t);
             }
         });
     }
 
+    private void internetApiCallFailure(Throwable t) {
+        Toast.makeText(PlacesResultsActivity.this, "Unable to contact server. Check your Internet connection", Toast.LENGTH_LONG).show();
+        Log.e("TAG", "BabyChange API Call failed", t);
+        finish();
+    }
+
     @Override
-    public void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
+    public void onStart() {
+        super.onStart();
+
+        if(!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
         }
     }
 }
