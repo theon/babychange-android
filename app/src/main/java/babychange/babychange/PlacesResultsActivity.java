@@ -5,14 +5,29 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
+import android.icu.text.MeasureFormat;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -36,6 +51,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -51,6 +67,20 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
     private ProgressBar statusProgressBar;
 
     private RequestQueue queue;
+
+    private class FilterCheckBox {
+        private CheckBox checkBox;
+        private String value;
+        private String name;
+
+        private FilterCheckBox(CheckBox checkBox, String name, String value) {
+            this.checkBox = checkBox;
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    private List<FilterCheckBox> facilityFilterCheckboxes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +99,31 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
 
         queue = Volley.newRequestQueue(this);
 
+//        Toolbar myToolbar = (Toolbar) findViewById(R.id.places_results_toolbar);
+//        setSupportActionBar(myToolbar);
+
         setContentView(R.layout.activity_places_results);
     }
 
     @Override
-    protected void onStart() {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.places_search, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.filter_menu_item:
+                DrawerLayout searchFilterDrawer = (DrawerLayout)findViewById(R.id.places_search_filter_drawer);
+                searchFilterDrawer.openDrawer(GravityCompat.END);
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStart() {
         statusText = (TextView) findViewById(R.id.statusText);
         statusProgressBar = (ProgressBar) findViewById(R.id.statusProgressBar);
 
@@ -83,7 +132,47 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
         checkPermission(Manifest.permission.INTERNET);
 
         mGoogleApiClient.connect();
+
+        LinearLayout facilityFiltersLayout = (LinearLayout) findViewById(R.id.facility_filters_layout);
+
+        ArrayList<String> filters = new ArrayList<>();
+        filters.add("babyChanging");
+        filters.add("highchairs");
+
+        ArrayList<String> values = new ArrayList<>();
+        values.add("Yes");
+        values.add("Wow");
+
+        int eightDp = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+
+        for(String filter: filters) {
+            TextView title = new TextView(this);
+            title.setText(filter);
+            title.setPadding(eightDp, eightDp, eightDp, eightDp);
+//            title.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+//            title.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+            facilityFiltersLayout.addView(title);
+
+            for(String value: values) {
+                CheckBox filterCheckbox = new CheckBox(this);
+                filterCheckbox.setText(value);
+                filterCheckbox.setPadding(eightDp, eightDp, eightDp, eightDp);
+//                filterCheckbox.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+//                filterCheckbox.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                facilityFiltersLayout.addView(filterCheckbox);
+                facilityFilterCheckboxes.add(new FilterCheckBox(filterCheckbox, filter, value));
+            }
+        }
+
         super.onStart();
+    }
+
+    public void searchWithFilters(View button) {
+        //TODO: Reuse searchFilterDrawer
+        DrawerLayout searchFilterDrawer = (DrawerLayout)findViewById(R.id.places_search_filter_drawer);
+        searchFilterDrawer.closeDrawer(GravityCompat.END);
+        onConnected(null);
     }
 
     private void checkPermission(String permission) {
@@ -144,7 +233,25 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
         System.out.println(location);
         statusText.setText("Finding places near you...");
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, "http://192.168.1.6:8080/places/" + location.getLatitude() + "," + location.getLongitude(), null,
+        String query = "?facilities=";
+        int count = 0;
+
+        for(FilterCheckBox fcb: facilityFilterCheckboxes) {
+            if(fcb.checkBox.isChecked()) {
+                boolean isFirst = query.charAt(query.length() - 1) == '=';
+                if(!isFirst) {
+                    query += ",";
+                }
+                query += fcb.name + ":" + fcb.value;
+                count++;
+            }
+        }
+
+        if(count == 0) {
+            query = "";
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, "http://192.168.1.6:8080/places/" + location.getLatitude() + "," + location.getLongitude() + query, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
