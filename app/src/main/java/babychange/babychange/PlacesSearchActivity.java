@@ -2,7 +2,7 @@ package babychange.babychange;
 
 import android.Manifest;
 import android.app.FragmentManager;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,12 +12,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import babychange.babychange.restapi.AllowedFilters;
+import babychange.babychange.restapi.PlaceSearchResult;
 import babychange.babychange.restapi.PlaceSearchResults;
 import babychange.babychange.restapi.RestApiClient;
 import babychange.babychange.restapi.RestApiFilter;
@@ -43,17 +44,18 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static babychange.babychange.restapi.Place.*;
 import static babychange.babychange.restapi.RestApiFilter.ENABLED_FILTERS_EXTRA_KEY;
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
-public class PlacesResultsActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class PlacesSearchActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
 
     private LocationRequest mLocationRequest;
 
-    private PlacesResultsListFragment resultsListFragment;
+    private PlacesSearchResultsListFragment resultsListFragment;
 
     private RestApiClient restClient;
 
@@ -91,7 +93,7 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
 
         restClient = retrofit.create(RestApiClient.class);
 
-        setContentView(R.layout.activity_places_results);
+        setContentView(R.layout.layout_places_search);
     }
 
     @Override
@@ -113,8 +115,10 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        setTitle("Places near you");
+
         FragmentManager fragmentManager = getFragmentManager();
-        resultsListFragment = (PlacesResultsListFragment) fragmentManager.findFragmentById(R.id.resultsListFragment);
+        resultsListFragment = (PlacesSearchResultsListFragment) fragmentManager.findFragmentById(R.id.resultsListFragment);
         resultsListFragment.setEmptyText("No results nearby");
 
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -136,21 +140,21 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
                 int eightDp = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 
                 for(AllowedFilters.AllowedFilter filter: response.body().facility) {
-                    TextView title = new TextView(PlacesResultsActivity.this);
+                    TextView title = new TextView(PlacesSearchActivity.this);
                     title.setText(filter.name);
                     title.setPadding(eightDp, eightDp, eightDp, eightDp);
 //            title.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 //            title.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
                     facilityFiltersLayout.addView(title);
 
-                    for(AllowedFilters.AllowedFilterValue value: filter.allowedValues) {
-                        CheckBox filterCheckbox = new CheckBox(PlacesResultsActivity.this);
-                        filterCheckbox.setText(value.value);
+                    for(String value: filter.allowedValues) {
+                        CheckBox filterCheckbox = new CheckBox(PlacesSearchActivity.this);
+                        filterCheckbox.setText(value);
                         filterCheckbox.setPadding(eightDp, eightDp, eightDp, eightDp);
 //                filterCheckbox.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
 //                filterCheckbox.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                        RestApiFilter apiFilter = new RestApiFilter(filter.queryName, value.queryValue);
+                        RestApiFilter apiFilter = new RestApiFilter(filter.queryName, value);
 
                         if(enabledFilters.contains(apiFilter)) {
                             filterCheckbox.setChecked(true);
@@ -243,6 +247,15 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
             @Override
             public void onResponse(Call<PlaceSearchResults> call, Response<PlaceSearchResults> response) {
                 resultsListFragment.setRows(response.body().places);
+                resultsListFragment.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        PlaceSearchResult clickedPlaceResult  = (PlaceSearchResult)parent.getAdapter().getItem(position);
+                        Intent toDetailsActivity = new Intent(PlacesSearchActivity.this, PlaceDetailsActivity.class);
+                        toDetailsActivity.putExtra(PLACE_DETAILS_EXTRA_KEY, clickedPlaceResult.place);
+                        startActivity(toDetailsActivity);
+                    }
+                });
             }
             @Override
             public void onFailure(Call<PlaceSearchResults> call, Throwable t) {
@@ -252,7 +265,7 @@ public class PlacesResultsActivity extends AppCompatActivity implements Connecti
     }
 
     private void internetApiCallFailure(Throwable t) {
-        Toast.makeText(PlacesResultsActivity.this, "Unable to contact server. Check your Internet connection", Toast.LENGTH_LONG).show();
+        Toast.makeText(PlacesSearchActivity.this, "Unable to contact server. Check your Internet connection", Toast.LENGTH_LONG).show();
         Log.e("TAG", "BabyChange API Call failed", t);
         finish();
     }

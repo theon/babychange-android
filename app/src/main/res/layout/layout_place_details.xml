@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/placeDetailsAddressText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Facilities"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="16dp"
+            android:textSize="18sp"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/placeDetailsFacilities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reviews"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"/>
+
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center"
+            android:max="5"
+            android:numStars="5"
+            android:clickable="false"
+            android:stepSize="0.1"
+            android:rating="4.7"
+            android:layout_margin="8dp"
+            android:isIndicator="true"/>
+
+
+    </LinearLayout>
+</ScrollView>

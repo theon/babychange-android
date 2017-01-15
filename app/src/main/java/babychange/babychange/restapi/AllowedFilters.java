@@ -12,11 +12,6 @@ public class AllowedFilters {
     public class AllowedFilter {
         public String name;
         public String queryName;
-        public List<AllowedFilterValue> allowedValues;
-    }
-
-    public class AllowedFilterValue {
-        public String value;
-        public String queryValue;
+        public List<String> allowedValues;
     }
 }

@@ -1,6 +1,5 @@
 package babychange.babychange;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +21,7 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.start);
+        setContentView(R.layout.layout_start);
     }
 
     public void searchForPlaces(View view) {
@@ -35,7 +34,7 @@ public class StartActivity extends AppCompatActivity {
                 break;
         }
 
-        Intent intent = new Intent(this, PlacesResultsActivity.class);
+        Intent intent = new Intent(this, PlacesSearchActivity.class);
         intent.putParcelableArrayListExtra(ENABLED_FILTERS_EXTRA_KEY, enabledFilters);
         startActivity(intent);
     }

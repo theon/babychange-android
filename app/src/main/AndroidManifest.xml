@@ -20,8 +20,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PlacesResultsActivity">
-        </activity>
+        <activity android:name=".PlacesSearchActivity" />
+        <activity android:name=".PlaceDetailsActivity" />
     </application>
 
 </manifest>

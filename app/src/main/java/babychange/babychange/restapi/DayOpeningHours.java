@@ -1,6 +1,8 @@
 package babychange.babychange.restapi;
 
-public class DayOpeningHours {
+import java.io.Serializable;
+
+public class DayOpeningHours implements Serializable {
     public String open;
     public String close;
 }
