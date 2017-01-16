@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
@@ -33,5 +32,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-guava:2.1.0'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.guava:guava:20.0'
 }

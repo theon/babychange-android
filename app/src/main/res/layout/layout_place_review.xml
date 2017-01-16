@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Out of five stars, rate the baby &amp; child facilities at this place?" />
+
+    <RatingBar
+        android:id="@+id/placingReviewRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center"
+        android:max="5"
+        android:numStars="5"
+        android:rating="2.5"
+        android:stepSize="0.5"
+        android:layout_margin="8dp"
+        android:isIndicator="false" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_marginTop="16px"
+        android:text="Which facilities are you reviewing?" />
+
+    <TextView
+        android:id="@+id/placeReviewSelectedFaciltiesText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:padding="16dp"
+        android:text="None Selected"/>
+
+    <Button
+        android:id="@+id/placeReviewSelectFacilitiesButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select facilities"
+        android:onClick="selectFacilities"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_marginTop="16px"
+        android:text="How was your experience?" />
+
+    <EditText
+        android:id="@+id/placeReviewReviewText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="5" />
+
+</LinearLayout>

@@ -29,7 +29,11 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:text="Baby Change"
-        android:onClick="searchForPlaces" />
+        android:onClick="searchForPlaces"
+        android:background="@color/colorAccent"
+        android:textColor="#fff"
+        android:drawablePadding="16dp"
+        android:drawableTop="@drawable/ic_wc_white_24dp" />
 
     <Button
         android:id="@+id/highchairsButton"
@@ -40,7 +44,12 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="4dp"
-        android:text="Highchairs" />
+        android:text="Highchairs"
+        android:onClick="searchForPlaces"
+        android:background="@color/colorAccent"
+        android:textColor="#fff"
+        android:drawablePadding="16dp"
+        android:drawableTop="@drawable/ic_event_seat_white_24dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -58,7 +67,12 @@
             android:layout_marginRight="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:text="Kids' Menus" />
+            android:text="Kids' Menus"
+            android:onClick="searchForPlaces"
+            android:background="@color/colorAccent"
+            android:textColor="#fff"
+            android:drawablePadding="16dp"
+            android:drawableTop="@drawable/ic_restaurant_white_24dp" />
 
         <Button
             android:id="@+id/feedingAreaButton"
@@ -70,7 +84,12 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:text="Feeding Area" />
+            android:text="Feeding Area"
+            android:onClick="searchForPlaces"
+            android:background="@color/colorAccent"
+            android:textColor="#fff"
+            android:drawablePadding="16dp"
+            android:drawableTop="@drawable/ic_supervisor_account_white_24dp" />
     </LinearLayout>
 
     <TextView
@@ -93,7 +112,11 @@
             android:padding="32dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="4dp"
-            android:text="Your Profile" />
+            android:text="Your Profile"
+            android:background="@color/colorAccent"
+            android:textColor="#fff"
+            android:drawablePadding="16dp"
+            android:drawableTop="@drawable/ic_child_care_white_24dp" />
 
         <Button
             android:id="@+id/addAPlaceButton"
@@ -103,6 +126,10 @@
             android:padding="32dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="16dp"
-            android:text="Add a Place" />
+            android:text="Add a Place"
+            android:background="@color/colorAccent"
+            android:textColor="#fff"
+            android:drawablePadding="16dp"
+            android:drawableTop="@drawable/ic_add_white_24dp" />
     </LinearLayout>
 </LinearLayout>

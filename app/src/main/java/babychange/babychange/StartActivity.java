@@ -32,6 +32,7 @@ public class StartActivity extends AppCompatActivity {
             case R.id.babyChangeButton:
                 enabledFilters.add(new RestApiFilter("babyChanging", "Yes"));
                 break;
+            //TODO: Do other buttons
         }
 
         Intent intent = new Intent(this, PlacesSearchActivity.class);

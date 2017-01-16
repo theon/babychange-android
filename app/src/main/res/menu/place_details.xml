@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/reviewPlaceMenuItem"
+        android:icon="@drawable/ic_forum_white_24dp"
+        android:title="Review Place"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/suggestPlaceEditMenuItem"
+        android:icon="@drawable/ic_mode_edit_white_24dp"
+        android:title="Suggest an edit"
+        app:showAsAction="ifRoom" />
+
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/settingsMenuItem"
+        android:title="Settings"
+        app:showAsAction="never"/>
+
+</menu>

@@ -52,11 +52,11 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:id="@+id/placeReviewsFragment"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="vertical" />-->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Leave a review"
+            android:onClick="gotoReviewForm"/>
 
     </LinearLayout>
 </ScrollView>

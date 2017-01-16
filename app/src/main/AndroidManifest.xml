@@ -22,6 +22,7 @@
 
         <activity android:name=".PlacesSearchActivity" />
         <activity android:name=".PlaceDetailsActivity" />
+        <activity android:name=".PlaceReviewActivity" />
     </application>
 
 </manifest>

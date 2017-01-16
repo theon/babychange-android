@@ -15,6 +15,7 @@ public class Facility implements Serializable, Parcelable {
     public final static String FACILITY_VALUE_BUNDLE_KEY = "FACILITY_VALUE";
 
     public String name;
+    public String queryName;
     public ArrayList<String> values;
 
     public Facility(Parcel source) {
@@ -32,6 +33,11 @@ public class Facility implements Serializable, Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeStringList(values);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public static final Creator<Facility> CREATOR = new Creator<Facility>() {

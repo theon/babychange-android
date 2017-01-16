@@ -28,6 +28,10 @@ public class Review {
         return format;
     }
 
+    public void setDate(Date d) {
+        date = DATE_FORMAT.format(d);
+    }
+
     private String durationString(int amount, String unit) {
         if(amount == 1) return amount + " " + unit + " ago";
         else            return amount + " " + unit + "s ago";

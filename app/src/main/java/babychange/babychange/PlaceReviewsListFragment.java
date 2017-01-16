@@ -11,6 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import babychange.babychange.restapi.Review;
@@ -25,11 +28,8 @@ public class PlaceReviewsListFragment extends NoScrollListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setEmptyText("No reviews yet");
-    }
-
-    public void setRows(List<Review> rows) {
         final LayoutInflater inflater = LayoutInflater.from(getActivity());
-        ArrayAdapter adapter = new ArrayAdapter<Review>(getActivity(), R.layout.fragment_review, rows) {
+        ArrayAdapter adapter = new ArrayAdapter<Review>(getActivity(), R.layout.fragment_review, new ArrayList<Review>()) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -38,7 +38,6 @@ public class PlaceReviewsListFragment extends NoScrollListFragment {
                 }
 
                 Review review = getItem(position);
-
 
                 RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.placeReviewRatingBar);
                 ratingBar.setRating(review.rating);
@@ -56,5 +55,12 @@ public class PlaceReviewsListFragment extends NoScrollListFragment {
             }
         };
         setListAdapter(adapter);
+    }
+
+    public void setRows(List<Review> rows) {
+        ArrayAdapter<Review> adapter = (ArrayAdapter<Review>)getListAdapter();
+        adapter.clear();
+        adapter.addAll(rows);
+        adapter.notifyDataSetChanged();
     }
 }
