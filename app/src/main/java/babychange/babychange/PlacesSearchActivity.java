@@ -37,12 +37,11 @@ import babychange.babychange.restapi.AllowedFilters;
 import babychange.babychange.restapi.PlaceSearchResult;
 import babychange.babychange.restapi.PlaceSearchResults;
 import babychange.babychange.restapi.RestApiClient;
+import babychange.babychange.restapi.RestApiClientHolder;
 import babychange.babychange.restapi.RestApiFilter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static babychange.babychange.restapi.Place.*;
 import static babychange.babychange.restapi.RestApiFilter.ENABLED_FILTERS_EXTRA_KEY;
@@ -56,8 +55,6 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
     private LocationRequest mLocationRequest;
 
     private PlacesSearchResultsListFragment resultsListFragment;
-
-    private RestApiClient restClient;
 
     private class FilterCheckBox {
         private CheckBox checkBox;
@@ -85,13 +82,6 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.6:8080")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        restClient = retrofit.create(RestApiClient.class);
 
         setContentView(R.layout.layout_places_search);
     }
@@ -125,7 +115,7 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
         checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
         checkPermission(Manifest.permission.INTERNET);
 
-        Call<AllowedFilters> response = restClient.getAllowedFilters();
+        Call<AllowedFilters> response = RestApiClientHolder.restClient.getAllowedFilters();
 
         //TODO: Make member variable
         final LinearLayout facilityFiltersLayout = (LinearLayout) findViewById(R.id.facility_filters_layout);
@@ -241,7 +231,7 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
             }
         }
 
-        Call<PlaceSearchResults> response = restClient.findPlaces(location.getLatitude(), location.getLongitude(), selectedFilters);
+        Call<PlaceSearchResults> response = RestApiClientHolder.restClient.findPlaces(location.getLatitude(), location.getLongitude(), selectedFilters);
 
         response.enqueue(new Callback<PlaceSearchResults>() {
             @Override

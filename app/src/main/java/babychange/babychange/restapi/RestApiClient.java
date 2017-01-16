@@ -15,4 +15,7 @@ public interface RestApiClient {
 
     @GET("filters")
     Call<AllowedFilters> getAllowedFilters();
+
+    @GET("reviews")
+    Call<ReviewResults> findReviews(@Query("place") String place);
 }

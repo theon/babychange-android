@@ -1,6 +1,7 @@
 package babychange.babychange;
 
 import android.app.ListFragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,12 @@ public class PlacesSearchResultsListFragment extends ListFragment {
 
     public void setRows(List<PlaceSearchResult> rows) {
         final LayoutInflater inflater = LayoutInflater.from(getActivity());
-        ArrayAdapter adapter = new ArrayAdapter<PlaceSearchResult>(getActivity(), R.layout.fragment_place_layout, rows) {
+        ArrayAdapter adapter = new ArrayAdapter<PlaceSearchResult>(getActivity(), R.layout.fragment_place_search_result, rows) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 if (convertView == null) {
-                    convertView = inflater.inflate(R.layout.fragment_place_layout, parent, false);
+                    convertView = inflater.inflate(R.layout.fragment_place_search_result, parent, false);
                 }
 
                 PlaceSearchResult result = getItem(position);

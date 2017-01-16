@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Place implements Serializable {
     public final static String PLACE_DETAILS_EXTRA_KEY = "PLACE_DETAILS";
 
+    public String id;
     public String name;
     public String categories;
     public String address;

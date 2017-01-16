@@ -35,17 +35,28 @@
             android:textSize="18sp"/>
 
         <RatingBar
+            android:id="@+id/placeDetailsAverageRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center"
             android:max="5"
             android:numStars="5"
-            android:clickable="false"
             android:stepSize="0.1"
-            android:rating="4.7"
             android:layout_margin="8dp"
             android:isIndicator="true"/>
 
+        <fragment android:name="babychange.babychange.PlaceReviewsListFragment"
+            android:id="@+id/placeReviewsFragment"
+            android:padding="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--android:id="@+id/placeReviewsFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical" />-->
 
     </LinearLayout>
 </ScrollView>
