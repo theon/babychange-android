@@ -1,5 +1,8 @@
 package babychange.babychange.restapi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +15,7 @@ import java.util.TimeZone;
  * Created by ian on 15/01/2017.
  */
 
-public class Review {
+public class Review implements Parcelable {
     public float rating;
     public String date;
     public String place;
@@ -22,6 +25,30 @@ public class Review {
     public String user;
 
     private static final SimpleDateFormat DATE_FORMAT = createDateFormat();
+
+    public Review() { }
+
+    protected Review(Parcel in) {
+        rating = in.readFloat();
+        date = in.readString();
+        place = in.readString();
+        facilities = in.createStringArrayList();
+        review = in.readString();
+        user = in.readString();
+    }
+
+    public static final Creator<Review> CREATOR = new Creator<Review>() {
+        @Override
+        public Review createFromParcel(Parcel in) {
+            return new Review(in);
+        }
+
+        @Override
+        public Review[] newArray(int size) {
+            return new Review[size];
+        }
+    };
+
     private static SimpleDateFormat createDateFormat() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -66,5 +93,21 @@ public class Review {
             e.printStackTrace();
             return "";
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeFloat(rating);
+        dest.writeString(date);
+        dest.writeString(place);
+        dest.writeStringList(facilities);
+        dest.writeString(review);
+        dest.writeString(user);
     }
 }

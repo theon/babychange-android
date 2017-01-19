@@ -15,6 +15,9 @@ public interface RestApiClient {
                                         @Path("lon") double lon,
                                         @Query("facility")List<RestApiFilter> facilities);
 
+    @POST("places")
+    Call<BabyPlace> createPlace(@Body BabyPlace place);
+
     @GET("filters")
     Call<AllowedFilters> getAllowedFilters();
 
@@ -22,5 +25,5 @@ public interface RestApiClient {
     Call<ReviewResults> findReviews(@Query("place") String place);
 
     @POST("reviews")
-    Call<NewReviewResponse> createReview(@Body NewReview review);
+    Call<Review> createReview(@Body NewReview review);
 }

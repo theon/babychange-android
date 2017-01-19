@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,11 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import babychange.babychange.restapi.Facility;
-import babychange.babychange.restapi.NewReview;
-import babychange.babychange.restapi.Place;
+import babychange.babychange.restapi.BabyPlace;
 import babychange.babychange.restapi.RestApiClientHolder;
 import babychange.babychange.restapi.Review;
 import babychange.babychange.restapi.ReviewResults;
@@ -27,9 +22,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static babychange.babychange.PlaceReviewActivity.NEW_VIEW_CREATED_EXTRA;
-import static babychange.babychange.restapi.Place.PLACE_DETAILS_EXTRA_KEY;
-import static babychange.babychange.restapi.Place.PLACE_REVIEW_EXTRA_KEY;
+import static babychange.babychange.NewReviewActivity.NEW_VIEW_CREATED_EXTRA;
+import static babychange.babychange.restapi.BabyPlace.PLACE_DETAILS_EXTRA_KEY;
+import static babychange.babychange.restapi.BabyPlace.PLACE_REVIEW_EXTRA_KEY;
 
 /**
  * Created by ian on 12/01/2017.
@@ -39,7 +34,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     public static final int RETURN_FROM_REVIEW_ACTIVITY = 1;
 
-    private Place place;
+    private BabyPlace place;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +44,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onPostCreate(Bundle bundle) {
-        place = (Place)getIntent().getSerializableExtra(PLACE_DETAILS_EXTRA_KEY);
+        place = (BabyPlace)getIntent().getSerializableExtra(PLACE_DETAILS_EXTRA_KEY);
 
         setTitle(place.name);
 
@@ -118,7 +113,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     public void gotoReviewForm(View button) {
-        Intent toPlaceReviewActivity = new Intent(this, PlaceReviewActivity.class);
+        Intent toPlaceReviewActivity = new Intent(this, NewReviewActivity.class);
         toPlaceReviewActivity.putExtra(PLACE_REVIEW_EXTRA_KEY, place);
         startActivityForResult(toPlaceReviewActivity, RETURN_FROM_REVIEW_ACTIVITY);
     }
@@ -126,21 +121,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == RETURN_FROM_REVIEW_ACTIVITY && resultCode == RESULT_OK) {
-            NewReview newReview = data.getParcelableExtra(NEW_VIEW_CREATED_EXTRA);
-
+            Review newReview = data.getParcelableExtra(NEW_VIEW_CREATED_EXTRA);
             FragmentManager fragmentManager = getSupportFragmentManager();
             PlaceReviewsListFragment reviewsListFragment = (PlaceReviewsListFragment)fragmentManager.findFragmentById(R.id.placeReviewsFragment);
             ArrayAdapter<Review> adapter = (ArrayAdapter<Review>)reviewsListFragment.getListAdapter();
-
-            Review r = new Review();
-            r.review = newReview.review;
-            r.setDate(new Date());
-            r.facilities = newReview.facilities;
-            r.place = place.id;
-            r.placeLocation = place.location;
-            r.rating = newReview.rating;
-            r.user = "-1";
-            adapter.insert(r, 0);
+            adapter.insert(newReview, 0);
         }
     }
 }

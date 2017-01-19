@@ -9,4 +9,11 @@ import java.io.Serializable;
 public class GeoLocation implements Serializable {
     public double lat;
     public double lon;
+
+    public GeoLocation() {}
+
+    public GeoLocation(double latitude, double longitude) {
+        this.lat = latitude;
+        this.lon = longitude;
+    }
 }

@@ -33,22 +33,21 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
-import babychange.babychange.restapi.AllowedFilters;
+import babychange.babychange.restapi.Facility;
 import babychange.babychange.restapi.PlaceSearchResult;
 import babychange.babychange.restapi.PlaceSearchResults;
-import babychange.babychange.restapi.RestApiClient;
 import babychange.babychange.restapi.RestApiClientHolder;
 import babychange.babychange.restapi.RestApiFilter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static babychange.babychange.restapi.Place.*;
+import static babychange.babychange.restapi.BabyPlace.*;
 import static babychange.babychange.restapi.RestApiFilter.ENABLED_FILTERS_EXTRA_KEY;
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
-public class PlacesSearchActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class PlacesSearchActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, FacilitiesService.OnFacilitiesCallback {
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -115,57 +114,7 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
         checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
         checkPermission(Manifest.permission.INTERNET);
 
-        Call<AllowedFilters> response = RestApiClientHolder.restClient.getAllowedFilters();
-
-        //TODO: Make member variable
-        final LinearLayout facilityFiltersLayout = (LinearLayout) findViewById(R.id.facility_filters_layout);
-        facilityFiltersLayout.removeAllViews();
-        facilityFilterCheckboxes = new ArrayList<>();
-
-        final ArrayList<RestApiFilter> enabledFilters = getIntent().getParcelableArrayListExtra(ENABLED_FILTERS_EXTRA_KEY);
-
-        response.enqueue(new Callback<AllowedFilters>() {
-            @Override
-            public void onResponse(Call<AllowedFilters> call, Response<AllowedFilters> response) {
-                int eightDp = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-
-                for(AllowedFilters.AllowedFilter filter: response.body().facility) {
-                    TextView title = new TextView(PlacesSearchActivity.this);
-                    title.setText(filter.name);
-                    title.setPadding(eightDp, eightDp, eightDp, eightDp);
-//            title.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-//            title.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-                    facilityFiltersLayout.addView(title);
-
-                    for(String value: filter.allowedValues) {
-                        CheckBox filterCheckbox = new CheckBox(PlacesSearchActivity.this);
-                        filterCheckbox.setText(value);
-                        filterCheckbox.setPadding(eightDp, eightDp, eightDp, eightDp);
-//                filterCheckbox.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-//                filterCheckbox.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                        RestApiFilter apiFilter = new RestApiFilter(filter.queryName, value);
-
-                        if(enabledFilters.contains(apiFilter)) {
-                            filterCheckbox.setChecked(true);
-                        }
-
-                        facilityFiltersLayout.addView(filterCheckbox);
-                        facilityFilterCheckboxes.add(new FilterCheckBox(filterCheckbox, apiFilter));
-                    }
-                }
-
-                // Only connect to location api after we have set up the filters as location api tends to win the
-                // race comes back before and fails as facilityFilterCheckboxes hasn't been set up.
-                // Better way to do this so that we can connect, get location, but wait for facilityFilterCheckboxes?
-                mGoogleApiClient.connect();
-            }
-
-            @Override
-            public void onFailure(Call<AllowedFilters> call, Throwable t) {
-                internetApiCallFailure(t);
-            }
-        });
+        FacilitiesService.getAllowedFacilities(this);
 
         super.onPostCreate(savedInstanceState);
     }
@@ -223,6 +172,8 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
     public void onLocationChanged(Location location) {
         //resultsListFragment.setLoadingText("Finding places near you...");
 
+        if(facilityFilterCheckboxes == null) return;
+
         List<RestApiFilter> selectedFilters = new ArrayList<>();
 
         for(FilterCheckBox fcb: facilityFilterCheckboxes) {
@@ -267,5 +218,53 @@ public class PlacesSearchActivity extends AppCompatActivity implements Connectio
         if(!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
+    }
+
+    @Override
+    public void onFacilities(List<Facility> facilities) {
+        //TODO: Make member variable
+        final LinearLayout facilityFiltersLayout = (LinearLayout) findViewById(R.id.facility_filters_layout);
+        facilityFiltersLayout.removeAllViews();
+        facilityFilterCheckboxes = new ArrayList<>();
+
+        final ArrayList<RestApiFilter> enabledFilters = getIntent().getParcelableArrayListExtra(ENABLED_FILTERS_EXTRA_KEY);
+
+        int eightDp = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+
+        for(Facility facility: facilities) {
+            TextView title = new TextView(PlacesSearchActivity.this);
+            title.setText(facility.name);
+            title.setPadding(eightDp, eightDp, eightDp, eightDp);
+//            title.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+//            title.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+            facilityFiltersLayout.addView(title);
+
+            for(String value: facility.values) {
+                CheckBox filterCheckbox = new CheckBox(PlacesSearchActivity.this);
+                filterCheckbox.setText(value);
+                filterCheckbox.setPadding(eightDp, eightDp, eightDp, eightDp);
+//                filterCheckbox.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+//                filterCheckbox.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                RestApiFilter apiFilter = new RestApiFilter(facility.queryName, value);
+
+                if(enabledFilters.contains(apiFilter)) {
+                    filterCheckbox.setChecked(true);
+                }
+
+                facilityFiltersLayout.addView(filterCheckbox);
+                facilityFilterCheckboxes.add(new FilterCheckBox(filterCheckbox, apiFilter));
+            }
+        }
+
+        // Only connect to location api after we have set up the filters as location api tends to win the
+        // race comes back before and fails as facilityFilterCheckboxes hasn't been set up.
+        // Better way to do this so that we can connect, get location, but wait for facilityFilterCheckboxes?
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        internetApiCallFailure(t);
     }
 }

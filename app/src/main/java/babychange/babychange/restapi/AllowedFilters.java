@@ -7,11 +7,5 @@ import java.util.List;
  */
 
 public class AllowedFilters {
-    public List<AllowedFilter> facility;
-
-    public class AllowedFilter {
-        public String name;
-        public String queryName;
-        public List<String> allowedValues;
-    }
+    public List<Facility> facility;
 }

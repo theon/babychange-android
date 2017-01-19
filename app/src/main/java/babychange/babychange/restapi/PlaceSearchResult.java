@@ -5,6 +5,6 @@ package babychange.babychange.restapi;
  */
 
 public class PlaceSearchResult {
-    public Place place;
+    public BabyPlace place;
     public int distanceInMetres;
 }

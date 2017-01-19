@@ -13,6 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCHGPofMRTV0FOmIm-x3HjhXbEpa_prfqo"/>
+
         <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +26,8 @@
 
         <activity android:name=".PlacesSearchActivity" />
         <activity android:name=".PlaceDetailsActivity" />
-        <activity android:name=".PlaceReviewActivity" />
+        <activity android:name=".NewReviewActivity" />
+        <activity android:name=".NewPlaceActivity" android:screenOrientation="portrait" />
     </application>
 
 </manifest>

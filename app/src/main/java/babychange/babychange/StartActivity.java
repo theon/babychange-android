@@ -39,4 +39,9 @@ public class StartActivity extends AppCompatActivity {
         intent.putParcelableArrayListExtra(ENABLED_FILTERS_EXTRA_KEY, enabledFilters);
         startActivity(intent);
     }
+
+    public void newPlace(View view) {
+        Intent intent = new Intent(this, NewPlaceActivity.class);
+        startActivity(intent);
+    }
 }

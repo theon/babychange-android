@@ -130,6 +130,7 @@
             android:background="@color/colorAccent"
             android:textColor="#fff"
             android:drawablePadding="16dp"
-            android:drawableTop="@drawable/ic_add_white_24dp" />
+            android:drawableTop="@drawable/ic_add_white_24dp"
+            android:onClick="newPlace" />
     </LinearLayout>
 </LinearLayout>

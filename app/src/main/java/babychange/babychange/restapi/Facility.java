@@ -18,8 +18,11 @@ public class Facility implements Serializable, Parcelable {
     public String queryName;
     public ArrayList<String> values;
 
+    public Facility() { }
+
     public Facility(Parcel source) {
         name = source.readString();
+        queryName = source.readString();
         values = new ArrayList<>();
         source.readStringList(values);
     }
@@ -32,6 +35,7 @@ public class Facility implements Serializable, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(queryName);
         dest.writeStringList(values);
     }
 

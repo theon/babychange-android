@@ -12,7 +12,7 @@ public class RestApiClientHolder {
     public static RestApiClient restClient = createClient();
     private static RestApiClient createClient() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.6:8080")
+                .baseUrl("http://192.168.1.5:8080")
                 .addCallAdapterFactory(GuavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
